@@ -1,0 +1,56 @@
+﻿@page "/"
+
+<h1>@Title</h1>
+
+<div class="row">
+    <p>@Article</p>
+</div>
+
+<div class="row mt-5">Please input a value as "ru", "en" or "de" to load a localization</div>
+
+<div class="row">
+    <div class="col-4">
+        <input class="form-control mr-3" @bind-value="Lang" />
+    </div>
+    <div class="col-4">
+        <button class="btn btn-primary" @onclick="Load">Load localization</button>
+    </div>
+</div>
+
+@code {
+    // my variables for the page
+    private string Title { get; set; }
+    private string Article { get; set; }
+    private string Lang { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // run localization on load
+        LoadLocalization();
+    }
+
+    private void LoadLocalization() //this function is also assigned to the button
+    {
+
+        // loading localization for variables but if input is free then load "en" localization
+        if (!string.IsNullOrEmpty(Lang))
+        {
+            Title = Global.configuration["Localization:" + Lang + ":Title"];//=== first getting exactly from inputed localization
+            if (string.IsNullOrEmpty(Title)) //=================================== but if empty then use "en" localization
+            {
+                Title = Global.configuration["Localization:en:Title"];
+            }
+
+            Article = Global.configuration["Localization:" + Lang + ":Article"];//=== first getting exactly from inputed localization
+            if (string.IsNullOrEmpty(Article)) //==================================== but if empty then use "en" localization
+            {
+                Article = Global.configuration["Localization:en:Article"];
+            }
+        }
+        else
+        {
+            Title = Global.configuration["Localization:en:Title"];
+            Article = Global.configuration["Localization:en:Article"];
+        }
+    }
+}
